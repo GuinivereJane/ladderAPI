@@ -1,0 +1,23 @@
+{
+  "name": "ladderapi",
+  "version": "1.0.0",
+  "description": "The server side API for ladder:a tabletop gaming ladder system based on the one in AOS Genrals Handbook",
+  "main": "server.js",
+  "dependencies": {
+    "better-js-class": "*",
+    "body-parser": "^1.17.1",
+    "cors": "^2.8.1",
+    "cps": "*",
+    "express": "^4.15.2",
+    "method-override": "^2.3.7",
+    "mysql": "^2.13.0",
+    "node-sql": "^1.1.1",
+    "underscore": "*"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Guin Kellam",
+  "license": "ISC"
+}
