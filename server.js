@@ -1,6 +1,10 @@
+
+/** next task set up webpack and use es6 classes **/
+
 var express = require('express');
 var cors = require('cors');
 var methodOverride = require('method-override');
+
 
 var app = express();
 var bodyParser = require('body-parser');
@@ -17,20 +21,20 @@ app.use(function(req, res, next) {
 });
 
 
+ 
+ 
+ 
+
 // Create application/x-www-form-urlencoded parser
 var urlencodedParser = bodyParser.urlencoded({ extended: false })
 
 //the routes for players 
-var players = require('./controllers/players.js');
+var players = require('./utils/routes.js');
 app.use('/', players);
 
-var stores = require('./controllers/stores.js');
-app.use('/', stores);
+
 
 //This responds with "Hello World" on the homepage
-app.get('/', function (req, res) {
-   res.send('HOME');
-})
 
 
 app.listen(8081, function(){
