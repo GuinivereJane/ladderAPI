@@ -23,9 +23,15 @@ app.use(function(req, res, next) {
 
 var urlencodedParser = bodyParser.urlencoded({ extended: false })
 
-//the routes for players 
-var routes = require('./routes/routes.js');
-app.use('/', routes);
+var user = require('./routes/user.js');
+app.use('/', user);
+
+var store = require('./routes/store.js');
+app.use('/', store);
+
+var home = require('./routes/home.js');
+app.use('/', home);
+
 
 
 
