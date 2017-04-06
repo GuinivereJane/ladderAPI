@@ -62,7 +62,24 @@ module.exports = (function() {
 		});
 	});
 
+	router.delete('/users/:id/:stores/:shopId',(req,res)=>{
+		//remove a store from a player
+				let user = models.User.findById(req.params.id);
+				let shop = models.Store.findById(req.params.shopId);
+				Promise.all([user,shop])
+					.then((values)=>{
+
+						// let user = values[0];
+						// let shop = values[1];
+
+						values[1].removeUser(values[0])
+							.then(()=>{res.end()});		
+					});
+		
+	});
+
 	router.post('/users/:id/stores/:shopId',(req,res)=>{
+		//add a player to a 
 				let user = models.User.findById(req.params.id);
 				let shop = models.Store.findById(req.params.shopId);
 

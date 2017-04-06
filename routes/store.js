@@ -40,6 +40,7 @@ router.get('/stores',function (req, res) {
 		});
 	  res.end();
 })
+	
 
 router.get('/stores/:id/users',(req,res)=>{
 		models.Store.findById(req.params.id).then((store)=>{
