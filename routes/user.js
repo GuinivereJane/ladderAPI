@@ -24,6 +24,13 @@ module.exports = (function() {
 												phonenumber: req.body.phonenumber
 		}).then(function() {
     	res.end();
+  	}).catch((e)=>{
+  		console.log(e);
+  		let errors = e.errors.map((error)=>{
+  			return {type:error.type, path:error.path}
+  		});
+
+  		res.status(400).send(errors);
   	});
 	 
 	})

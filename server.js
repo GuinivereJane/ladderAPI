@@ -29,6 +29,9 @@ app.use('/', user);
 var store = require('./routes/store.js');
 app.use('/', store);
 
+var game = require('./routes/game.js');
+app.use('/', game);
+
 var home = require('./routes/home.js');
 app.use('/', home);
 
