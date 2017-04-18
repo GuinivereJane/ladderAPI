@@ -1,7 +1,10 @@
 'use strict';
 module.exports = function(sequelize, DataTypes) {
   var Game = sequelize.define('Game', {
-    points: DataTypes.INTEGER,
+    points: {
+      type: DataTypes.INTEGER,
+      validate: {isInt: true}
+    },
     winnerId: DataTypes.INTEGER,
     winnerFaction: DataTypes.STRING,
     loserFaction: DataTypes.STRING,

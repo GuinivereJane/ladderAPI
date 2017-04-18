@@ -3,11 +3,11 @@ module.exports = function(sequelize, DataTypes) {
   var User = sequelize.define('User', {
     firstname:{
       type: DataTypes.STRING,
-      //validate: {is: /^[a-z]+$/i}
+      validate: {isAlphanumeric: true}
     },
     lastname: {
       type: DataTypes.STRING,
-      //validate: {is: /^[a-z]+$/i}
+      validate: {isAlphanumeric: true}
     },
     email:{ 
       type: DataTypes.STRING,

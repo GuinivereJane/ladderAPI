@@ -22,11 +22,19 @@ console.log(req.body)
 												winnerFaction: req.body.winnerFaction,
 												loserFaction: req.body.loserFaction});
 
+		game.catch((e)=>{
+
+  		let errors = e.errors.map((error)=>{
+  			return {type:error.type, path:error.path}
+  		});
+  		 res.status(400).send(errors);
+  	});
+
 		Promise.all([winner,loser,game]).then((values)=>{
 				let winner = values[0];
 				let loser = values[1];
 				let game = values[2];
-								console.log(values[2].points)
+								//console.log(values[2].points)
 
 				winner.addGame(game);
 				loser.addGame(game);

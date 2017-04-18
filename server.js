@@ -26,6 +26,12 @@ var urlencodedParser = bodyParser.urlencoded({ extended: false })
 var user = require('./routes/user.js');
 app.use('/', user);
 
+var faction = require('./routes/faction.js');
+app.use('/', faction);
+
+var alliance = require('./routes/alliance.js');
+app.use('/', alliance);
+
 var store = require('./routes/store.js');
 app.use('/', store);
 

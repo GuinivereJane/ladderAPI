@@ -2,7 +2,7 @@
 
 module.exports = {
   up: function (queryInterface, Sequelize) {
-    return queryInterface.createTable('Factions', {
+    return queryInterface.createTable('Alliances', {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -10,10 +10,7 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       name: {
-        type: Sequelize.String
-      },
-      allianceId: {
-        type: Sequelize.INTEGER
+        type: Sequelize.STRING
       },
       createdAt: {
         allowNull: false,
@@ -27,7 +24,7 @@ module.exports = {
   },
 
   down: function (queryInterface, Sequelize) {
-        return queryInterface.dropTable('Games');
+              return queryInterface.dropTable('Alliances');
 
   }
 };
