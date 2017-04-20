@@ -1,6 +1,7 @@
 module.exports = (function() {
   'use strict';
    const router = require('express').Router();
+   const crypto = require('crypto');
 
 	const models = require('../models');
 	const bodyParser = require('body-parser');
@@ -18,10 +19,16 @@ module.exports = (function() {
 	})
 
 	router.post('/users',urlencodedParser,function(req, res){
+			
+	 	let salt = models.User.createPasswordSalt();
+	  let encPass = models.User.encryptPassword(req.body.password,salt).toString('hex');
+
 		models.User.create({firstname: req.body.firstname,
 												lastname: req.body.lastname,
 												email: req.body.email,
-												phonenumber: req.body.phonenumber
+												phonenumber: req.body.phonenumber,
+												salt:salt,
+												password:encPass
 		}).then(function() {
     	res.end();
   	}).catch((e)=>{

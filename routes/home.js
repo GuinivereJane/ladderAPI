@@ -4,11 +4,14 @@
 module.exports = (function() {
   'use strict';
    var router = require('express').Router();
+ //var crypto = require('crypto');
 
 var models = require('../models');
 var jwt = require('jsonwebtoken');
 var passportJWT = require("passport-jwt");
 var passport = require('passport');  
+
+const crypto = require('crypto');
 
 var ExtractJwt = passportJWT.ExtractJwt;
 var JwtStrategy = passportJWT.Strategy;
@@ -49,44 +52,51 @@ router.get("/secret", passport.authenticate('jwt', { session: false }),
 });
 
 
-var users = [
-  {
-    id: 1,
-    name: 'jonathanmh',
-    password: '%2yx4'
-  },
-  {
-    id: 2,
-    name: 'test',
-    password: 'test'
-  }
-];
 
+function randomValueHex (len) {
+    return crypto.randomBytes(Math.ceil(len/2))
+        .toString('hex') // convert to hexadecimal format
+        .slice(0,len);   // return required number of characters
+}
 
 
 router.post("/login", function(req, res) {
 	console.log('hello');
-  if(req.body.name && req.body.password){
-    var name = req.body.name;
-    var password = req.body.password;
-  }
-  console.log(name);
-  // usually this would be a database call:
-  var user = users[_.findIndex(users, {name: name})];
-  if( ! user ){
-    res.status(401).json({message:"no such user found"});
-  }
+ 
+  let email = req.body.email;
+  let password = req.body.password;
+  let salt = randomValueHex(34);
 
-  if(user.password === req.body.password) {
-    // from now on we'll identify the user by the id and the id is the only personalized value that goes into our token
-    var payload = {id: user.id};
-    var token = jwt.sign(payload, jwtOptions.secretOrKey);
-    
 
-    res.json({message: "ok", token: token});
-  } else {
-    res.status(401).json({message:"passwords did not match"});
-  }
+	crypto.pbkdf2(password, salt, 100000, 512, 'sha512', (err, key) => {
+	  if (err) throw err;
+	  console.log(key.toString('hex'));  // '3745e48...aa39b34'
+	});
+  console.log(email)
+
+let test = crypto.pbkdf2(password, salt, 100000, 512, 'sha512', (err, key) => {
+	  if (err) throw err;
+	  return key.toString('hex');  // '3745e48...aa39b34'
+	});
+console.log(test);
+	var user = models.User.findOne({
+	  where: {
+	    email: email
+	  }
+	}).done((user)=>{
+		if( ! user ){
+	    res.status(401).json({type:"Invalid Login"});
+	  }
+	  if(user.password === req.body.password) {
+	    // from now on we'll identify the user by the id and the id is the only personalized value that goes into our token
+	    var payload = {id: user.id};
+	    var token = jwt.sign(payload, jwtOptions.secretOrKey); 
+	    res.json({message: "ok", token: token});
+	  } else {
+	    res.status(401).json({type:"Invalid Login"});
+	  }
+	});
+	
 });
 
     return router;
