@@ -14,7 +14,6 @@ module.exports = (function() {
 	})
 
 	router.post('/games',urlencodedParser,function(req, res){
-console.log(req.body)
 		let winner = models.User.findById(req.body.winnerId);
 		let loser = models.User.findById(req.body.loserId);
 		let game = models.Game.create({points: req.body.points,
@@ -51,7 +50,7 @@ console.log(req.body)
 		})
 	})
 
-	router.delete('/games/:id',urlencodedParser, function(req,res){
+	router.delete('/games/:id', function(req,res){
 	   models.Game.destroy({
 		  where: {
 		    id: req.params.id

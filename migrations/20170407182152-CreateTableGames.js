@@ -2,18 +2,24 @@
 
 module.exports = {
   up: function (queryInterface, Sequelize) {
-    return queryInterface.createTable('Factions', {
+   return queryInterface.createTable('Games', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      name: {
-        type: Sequelize.String
-      },
-      allianceId: {
+      points: {
         type: Sequelize.INTEGER
+      },
+      winnerId: {
+        type: Sequelize.INTEGER
+      },
+      winnerFaction: {
+        type: Sequelize.STRING
+      },
+      loserFaction: {
+        type: Sequelize.STRING
       },
       createdAt: {
         allowNull: false,

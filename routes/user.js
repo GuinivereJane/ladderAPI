@@ -58,7 +58,7 @@ module.exports = (function() {
 			    id: req.params.id
 			  }
 			});
-		  res.end();
+		  res.end(req.params.id);
 	})
 
 	router.get('/users/:id/stores',(req,res)=>{

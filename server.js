@@ -5,13 +5,22 @@ var express = require('express');
 var cors = require('cors');
 var methodOverride = require('method-override');
 
+var _ = require("lodash");
+
 var app = express();
 var bodyParser = require('body-parser');
+
 
 var models = require('./models');
 
 app.use(methodOverride('_method'))
 app.use(cors());
+
+app.use(bodyParser.urlencoded({ extended: true }));  
+app.use(bodyParser.json());
+
+// Log requests to console
+//app.use(morgan('dev'));  
 
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
@@ -19,6 +28,37 @@ app.use(function(req, res, next) {
   res.header("Acess-Control-Allow-Methods","POST, GET, DELETE, OPTIONS");
   next();
 });
+
+
+var jwt = require('jsonwebtoken');
+var passportJWT = require("passport-jwt");
+var passport = require('passport');  
+
+var ExtractJwt = passportJWT.ExtractJwt;
+var JwtStrategy = passportJWT.Strategy;
+
+var _ = require("lodash");
+
+var jwtOptions = {}
+jwtOptions.jwtFromRequest = ExtractJwt.fromAuthHeader();
+jwtOptions.secretOrKey = 'tasmanianDevil';
+
+var strategy = new JwtStrategy(jwtOptions, function(jwt_payload, next) {
+  console.log('payload received', jwt_payload);
+  // usually this would be a database call:
+  var user = users[_.findIndex(users, {id: jwt_payload.id})];
+  if (user) {
+    next(null, user);
+  } else {
+    next(null, false);
+  }
+});
+
+passport.use(strategy);
+
+app.use(passport.initialize());
+
+
 
 
 var urlencodedParser = bodyParser.urlencoded({ extended: false })
@@ -44,7 +84,6 @@ app.use('/', home);
 
 
 
-//This responds with "Hello World" on the homepage
 
 models.sequelize.sync().then(function() {
 	app.listen(8081, function(){
