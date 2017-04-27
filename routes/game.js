@@ -7,13 +7,20 @@ module.exports = (function() {
 	const bodyParser = require('body-parser');
 	const urlencodedParser = bodyParser.urlencoded({ extended: false })
 
+	var passport = require('passport');  
+	var strategyMod = require("../middleware/authStrategy");
+	let strategy = strategyMod.strat();
+	passport.use(strategy);
+	router.use(passport.initialize());
+
 	router.get('/games',function (req, res) { 
 		 models.Game.findAll().then((games)=>{
 		 	res.end(JSON.stringify(games))
 		 });
 	})
 
-	router.post('/games',urlencodedParser,function(req, res){
+	router.post('/games',passport.authenticate('jwt', { session: false }),
+							urlencodedParser,function(req, res){
 		let winner = models.User.findById(req.body.winnerId);
 		let loser = models.User.findById(req.body.loserId);
 		let game = models.Game.create({points: req.body.points,

@@ -31,9 +31,10 @@ app.use(function(req, res, next) {
 
 
 var jwt = require('jsonwebtoken');
-var passportJWT = require("passport-jwt");
 var passport = require('passport');  
 
+
+var passportJWT = require("passport-jwt");
 var ExtractJwt = passportJWT.ExtractJwt;
 var JwtStrategy = passportJWT.Strategy;
 
@@ -44,16 +45,17 @@ jwtOptions.jwtFromRequest = ExtractJwt.fromAuthHeader();
 jwtOptions.secretOrKey = 'tasmanianDevil';
 
 var strategy = new JwtStrategy(jwtOptions, function(jwt_payload, next) {
-  console.log('payload received', jwt_payload);
-  // usually this would be a database call:
-  var user = users[_.findIndex(users, {id: jwt_payload.id})];
-  if (user) {
-    next(null, user);
-  } else {
-    next(null, false);
-  }
+  let user = models.User.findById(jwt_payload.id).done((user)=>{
+    if (user) {
+      next(null, user);
+    } else {
+      next(null, false);
+    }
+  })
 });
 
+var strategyMod = require("./middleware/authStrategy");
+strategy = strategyMod.strat();
 passport.use(strategy);
 
 app.use(passport.initialize());

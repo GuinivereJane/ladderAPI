@@ -7,6 +7,13 @@ module.exports = (function() {
 	const bodyParser = require('body-parser');
 	const urlencodedParser = bodyParser.urlencoded({ extended: false })
 
+	//code to set up authroizeation middleware
+	const passport = require('passport');  
+	const strategyMod = require("../middleware/authStrategy");
+	const strategy = strategyMod.strat();
+	passport.use(strategy);
+	router.use(passport.initialize());
+
 
 router.get('/stores',function (req, res) { 
 	 models.Store.findAll().then((stores)=>{
