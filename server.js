@@ -1,5 +1,6 @@
 //node_modules/.bin/sequelize
 /** next task set up webpack and use es6 classes **/
+require('dotenv').config();
 
 var express = require('express');
 var cors = require('cors');
@@ -62,11 +63,13 @@ app.use(passport.initialize());
 
 
 
-
 var urlencodedParser = bodyParser.urlencoded({ extended: false })
 
 var user = require('./routes/user.js');
 app.use('/', user);
+
+var challenge = require('./routes/challenge.js');
+app.use('/', challenge);
 
 var faction = require('./routes/faction.js');
 app.use('/', faction);

@@ -28,8 +28,13 @@ module.exports = function(sequelize, DataTypes) {
       associate: function(models) {
         // associations can be defined here
       User.belongsTo(models.Store)
-      User.belongsToMany(models.Game, {through: 'UserGame'})
+      User.hasMany(models.Challenge, {foreignKey:'challengerId'});
+      User.hasMany(models.Challenge, {foreignKey:'challengedId'});
 
+      User.belongsToMany(models.Game, {through: 'UserGame'})
+      },
+      fullname(){
+        return `${this.firstname} ${this.lastname}`;
       },
       createPasswordSalt: ()=>{
          let randomValueHex  = (len)=> {

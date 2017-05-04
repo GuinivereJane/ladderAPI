@@ -12,7 +12,10 @@ module.exports = function(sequelize, DataTypes) {
     classMethods: {
       associate: function(models) {
         // associations can be defined here
-      Game.belongsToMany(models.User, {through: 'UserGame'})
+      Game.belongsToMany(models.User, {through: 'UserGame'});
+      Game.hasOne(models.Challenge, {foreignKey:'gameId'});
+     // Game.hasOne(models.Challenge);
+
 
       }
     }

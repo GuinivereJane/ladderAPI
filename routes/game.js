@@ -22,28 +22,55 @@ module.exports = (function() {
 	router.post('/games',passport.authenticate('jwt', { session: false }),
 							urlencodedParser,function(req, res){
 		let winner = models.User.findById(req.body.winnerId);
-		let loser = models.User.findById(req.body.loserId);
-		let game = models.Game.create({points: req.body.points,
-												winnerId: req.body.winnerId,
-												winnerFaction: req.body.winnerFaction,
-												loserFaction: req.body.loserFaction});
+		
+		let loserSplit = req.body.loserId.split(' ');
+		let loserFirstName = loserSplit[0];
+		let loserLastName = loserSplit[1];
 
-		game.catch((e)=>{
+		let loser = models.User.find({
+				where: {
+    			firstname: loserFirstName,
+    			lastname: loserLastName
+  			}
+			});
 
-  		let errors = e.errors.map((error)=>{
-  			return {type:error.type, path:error.path}
-  		});
-  		 res.status(400).send(errors);
-  	});
 
-		Promise.all([winner,loser,game]).then((values)=>{
+		// let game = models.Game.create({points: req.body.points,
+		// 										winnerId: req.body.winnerId,
+		// 										winnerFaction: req.body.winnerFaction,
+		// 										loserFaction: req.body.loserFaction});
+		// game.catch((e)=>{
+
+  // 		let errors = e.errors.map((error)=>{
+  // 			return {type:error.type, path:error.path}
+  // 		});
+  // 		 res.status(400).send(errors);
+  // 	});
+
+
+
+		Promise.all([winner,loser]).then((values)=>{
+				
 				let winner = values[0];
 				let loser = values[1];
-				let game = values[2];
-								//console.log(values[2].points)
-
-				winner.addGame(game);
-				loser.addGame(game);
+				console.log(loser + "+++++++++++++")
+				if (winner != null && loser != null){
+					let game = models.Game.create({points: req.body.points,
+													winnerId: req.body.winnerId,
+													winnerFaction: req.body.winnerFaction,
+													loserFaction: req.body.loserFaction});
+					game.catch((e)=>{
+			  		let errors = e.errors.map((error)=>{
+			  			return {type:error.type, path:error.path}
+			  		});
+		  		 		res.status(400).send(errors);
+		  		}).then((game)=>{
+		  			winner.addGame(game);
+						loser.addGame(game);
+		  		});
+			}else{
+				res.status(400).send([{type:"Invalid Game Submisson"}]);
+			}
 
 			res.end();
 		})
