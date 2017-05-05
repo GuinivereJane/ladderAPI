@@ -1,15 +1,25 @@
 'use strict';
 module.exports = function(sequelize, DataTypes) {
+  const User = require('./user');
 
   var nodemailer = require("nodemailer");
+  
+  var smtpTransport = nodemailer.createTransport({
+    service: "gmail",
+    host: "smtp.gmail.com",
+    auth: {
+        user: process.env.EMAIL,
+        pass: process.env.EMAILPASSWORD
+    }
+  });
 
   var Challenge = sequelize.define('Challenge', {
-    // challenged:{
-    //   type: DataTypes.INTEGER,
-    // },
-    // challenger: {
-    //   type: DataTypes.INTEGER,
-    // },
+    challengedId:{
+      type: DataTypes.INTEGER,
+    },
+    challengerId: {
+      type: DataTypes.INTEGER,
+    },
     accepted: {
       type: DataTypes.BOOLEAN,
     },
@@ -32,8 +42,21 @@ module.exports = function(sequelize, DataTypes) {
       
     },
     instanceMethods:{
-      sendChallengeEmail: ()=>{
-        console.log("send Challenge")
+      sendChallengeEmail: function(){
+        var mailOptions={
+          to : process.env.EMAIL,
+          subject : "test",
+          text : `${process.env.FRONTURL}/challenge/${this.challengerId}/${this.challengedId}`
+        }
+        console.log(mailOptions);
+        smtpTransport.sendMail(mailOptions, function(error, response){
+          if(error){
+            console.log(error);
+          }else{
+            console.log("Message sent");
+          }
+        });
+
       }
     }
   });
