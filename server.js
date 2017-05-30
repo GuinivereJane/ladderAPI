@@ -95,3 +95,5 @@ models.sequelize.sync().then(function() {
 	  console.log('ladderAPI running...');
 	})
 });
+
+module.exports = app; // for testing
