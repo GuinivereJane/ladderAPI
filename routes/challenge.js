@@ -7,42 +7,19 @@ module.exports = (function() {
 	const bodyParser = require('body-parser');
 	const urlencodedParser = bodyParser.urlencoded({ extended: false })
 
-	router.get('/challenges',function (req, res) { 
-		
 
-		 models.Challenge.findAll().then((challenge)=>{
-		 	res.end(JSON.stringify(challenge))
-		 });
+router.get('/challenge/:id/accept',(req,res)=>{
+	let challenge = models.Challenge.findById(req.params.id)
+							.then((challenge)=>{
+								if (challenge.accepted == true){
+									res.status(400).send([{type:"this challenge has allready been accepted"}])
+								}else{
+									challenge.update({accepted: true}).then((challenge)=>{res.send(challenge)})	
+								}
+								}).catch((e)=>{res.status(400).send([{type:"Challenge not found"}])});
 
-	})
 
-
-	//create a new challenge and accosiate challenger and challenged.
-	router.get('/challenge/:challengerId/:challengedId',(req,res)=>{
-		let challenge = models.Challenge.create({accepted: false,
-												complete: false}).then((challenge)=>{
-													challenge.setChallenger(req.params.challengerId);
-												  challenge.setChallenged(req.params.challengedId);
-													challenge.sendChallengeEmail();
-												  res.send(JSON.stringify(challenge.get()));
-												 }).catch((e)=>{
-												 		console.log(e);
-												 		res.status(400).send(e);
-												 });
-
-	});
-
-//get end point to accept a game.
-	router.post('/challenge/:id',urlencodedParser,(req,res)=>{
-		let challenge = models.Challenge.findById(req.params.id).then((challenge)=>{
-					challenge.accepted = true;
-					challenge.save().then((challenge)=>{
-						res.send(JSON.stringify(challenge))
-					});
-
-		});
-	});
-
+  });
 
 //report a challenge game as complete
 	router.post('/challenge/:id/game/',urlencodedParser,(req,res)=>{
@@ -87,6 +64,59 @@ module.exports = (function() {
 
 		
 	});
+
+	router.get('/challenge/:id',(req,res)=>{
+		models.Challenge.findById(req.params.id).then((challenge)=>{
+			res.send(challenge);
+		}).catch((e)=>{
+			console.log(e);
+			res.status(400).send(e);
+		})
+	});
+
+	router.get('/challenges',function (req, res) { 
+		
+
+		 models.Challenge.findAll().then((challenge)=>{
+		 	res.end(JSON.stringify(challenge))
+		 });
+
+	})
+
+
+
+	//create a new challenge and accosiate challenger and challenged.
+	router.get('/challenge/:challengerId/:challengedId',(req,res)=>{
+		let challenge = models.Challenge.create({accepted: false,
+												complete: false}).then((challenge)=>{
+													challenge.setChallenger(req.params.challengerId);
+												  challenge.setChallenged(req.params.challengedId);
+													
+													challenge.sendChallengeEmail(challenge.id);
+												  res.send(JSON.stringify(challenge.get()));
+												 }).catch((e)=>{
+												 		console.log(e);
+												 		res.status(400).send(e);
+												 });
+
+	});
+
+
+
+//get end point to accept a game.
+	router.post('/challenge/:id',urlencodedParser,(req,res)=>{
+		let challenge = models.Challenge.findById(req.params.id).then((challenge)=>{
+					challenge.accepted = true;
+					challenge.save().then((challenge)=>{
+						res.send(JSON.stringify(challenge))
+					});
+
+		});
+	});
+
+
+
+
 
 
 

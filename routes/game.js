@@ -21,8 +21,26 @@ module.exports = (function() {
 
 	router.post('/games',passport.authenticate('jwt', { session: false }),
 							urlencodedParser,function(req, res){
-		let winner = models.User.findById(req.body.winnerId);
 		
+
+		let winner = null;
+		if (req.body.source == "new"){
+			winner = models.User.findById(req.body.winnerId);
+		}
+
+		if (req.body.source == "log"){
+			let winnerSplit = req.body.winnerId.split(' ');
+			let winnerFirstName = winnerSplit[0];
+			let winnerLastName = winnerSplit[1];
+
+			 winner = models.User.find({
+					where: {
+	    			firstname: winnerFirstName,
+	    			lastname: winnerLastName,
+	  			}
+				});
+		}
+
 		let loserSplit = req.body.loserId.split(' ');
 		let loserFirstName = loserSplit[0];
 		let loserLastName = loserSplit[1];
@@ -30,43 +48,38 @@ module.exports = (function() {
 		let loser = models.User.find({
 				where: {
     			firstname: loserFirstName,
-    			lastname: loserLastName
+    			lastname: loserLastName,
   			}
 			});
-
-
-		// let game = models.Game.create({points: req.body.points,
-		// 										winnerId: req.body.winnerId,
-		// 										winnerFaction: req.body.winnerFaction,
-		// 										loserFaction: req.body.loserFaction});
-		// game.catch((e)=>{
-
-  // 		let errors = e.errors.map((error)=>{
-  // 			return {type:error.type, path:error.path}
-  // 		});
-  // 		 res.status(400).send(errors);
-  // 	});
-
-
 
 		Promise.all([winner,loser]).then((values)=>{
 				
 				let winner = values[0];
 				let loser = values[1];
-				console.log(loser + "+++++++++++++")
+
 				if (winner != null && loser != null){
+
 					let game = models.Game.create({points: req.body.points,
-													winnerId: req.body.winnerId,
+													winnerId: winner.id,
 													winnerFaction: req.body.winnerFaction,
+													loserId:loser.id,
 													loserFaction: req.body.loserFaction});
 					game.catch((e)=>{
 			  		let errors = e.errors.map((error)=>{
 			  			return {type:error.type, path:error.path}
 			  		});
-		  		 		res.status(400).send(errors);
+		  		 	res.status(400).send(errors);
 		  		}).then((game)=>{
 		  			winner.addGame(game);
 						loser.addGame(game);
+		  		}).then(()=>{
+		  			//if this is a loged game, update the challenge status
+		  			if (req.body.source == "log"){
+		  				let challenge = models.Challenge.findById(req.body.challengeId)
+		  					.then((challenge)=>{challenge.update({complete:true})});
+		  				
+		  			}
+
 		  		});
 			}else{
 				res.status(400).send([{type:"Invalid Game Submisson"}]);

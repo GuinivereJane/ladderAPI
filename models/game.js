@@ -8,6 +8,7 @@ module.exports = function(sequelize, DataTypes) {
     winnerId: DataTypes.INTEGER,
     winnerFaction: DataTypes.STRING,
     loserFaction: DataTypes.STRING,
+    loserId:DataTypes.INTEGER,
   }, {
     classMethods: {
       associate: function(models) {

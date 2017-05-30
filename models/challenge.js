@@ -42,11 +42,13 @@ module.exports = function(sequelize, DataTypes) {
       
     },
     instanceMethods:{
-      sendChallengeEmail: function(){
+      sendChallengeEmail: function(challenge){
+
+
         var mailOptions={
           to : process.env.EMAIL,
           subject : "test",
-          text : `${process.env.FRONTURL}/challenge/${this.challengerId}/${this.challengedId}`
+          text : `${process.env.BACKURL}/challenge/${id}/accept`
         }
         console.log(mailOptions);
         smtpTransport.sendMail(mailOptions, function(error, response){

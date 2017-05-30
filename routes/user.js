@@ -104,5 +104,14 @@ module.exports = (function() {
 					});
 		
 	});
+
+	router.get('/users/:id/games',(req,res)=>{
+		let user = models.User.findById(req.params.id).then((user)=>{
+			user.getGames().then((games)=>{
+				res.end(JSON.stringify(games));
+			});
+		});
+	});
+
 	return router;
 })();
